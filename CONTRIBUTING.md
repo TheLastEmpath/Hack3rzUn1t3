@@ -37,6 +37,10 @@ request what you ran and on what hardware class.
 - Hostnames, IP addresses, usernames, local paths, keys, tokens or passwords.
 - Inventory or benchmark output that names a machine (use `--redact-host`).
 
+A CI check (`scripts/check_safety.py`) fails pull requests that add IPs, local
+paths, emails, key-like strings, weight files or files over 5 MB. For a
+deliberate example, put `safety-ok` on that line.
+
 ## Licensing
 
 The project is Apache-2.0 (see [LICENSE](LICENSE)). By submitting a

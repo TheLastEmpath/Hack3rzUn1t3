@@ -18,3 +18,16 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Run harness tests (no GPU)
         run: PYTHONPATH=src python -m unittest tests.test_harness tests.test_coordinator tests.test_net tests.test_worker
+  safety:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan for personal info, secrets, weights and large files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python3 scripts/check_safety.py "origin/${{ github.base_ref }}"
+          else
+            python3 scripts/check_safety.py --all
+          fi
