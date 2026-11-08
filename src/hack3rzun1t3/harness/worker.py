@@ -6,6 +6,8 @@ A compute failure is reported nowhere and the unit's lease simply expires, which
 is the same path as a crashed or vanished worker.
 """
 
+from __future__ import annotations
+
 import time
 
 from . import net

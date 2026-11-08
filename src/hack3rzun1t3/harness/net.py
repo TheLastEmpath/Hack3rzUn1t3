@@ -5,6 +5,8 @@ volunteers needs the tailnet ACLs and signed results from the multiuser design,
 which are not built yet. Authentication is optional (`keys`); without it anyone who can reach the port can submit.
 """
 
+from __future__ import annotations
+
 import hashlib
 import hmac
 import json

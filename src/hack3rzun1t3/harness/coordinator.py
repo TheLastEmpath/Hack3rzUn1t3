@@ -12,6 +12,8 @@ Rules:
 - Accepted results are written to the Store, so a restart resumes.
 """
 
+from __future__ import annotations
+
 import hashlib
 import time
 from dataclasses import dataclass, field

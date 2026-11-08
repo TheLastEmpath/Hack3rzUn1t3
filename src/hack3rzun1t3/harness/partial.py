@@ -6,6 +6,8 @@ batches, so the combined mean does not depend on how prompts were split. Sums
 are added in sorted batch order with math.fsum so the result is reproducible.
 """
 
+from __future__ import annotations
+
 import math
 from dataclasses import dataclass
 

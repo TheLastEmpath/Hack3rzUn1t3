@@ -5,6 +5,8 @@ range is the natural unit), in proportion to each slot's capacity. Prompts are
 split into fixed batches so a unit is (layer range, prompt batch).
 """
 
+from __future__ import annotations
+
 import hashlib
 from dataclasses import asdict, dataclass
 

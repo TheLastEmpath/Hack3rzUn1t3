@@ -4,6 +4,8 @@ One JSON object per line with a CRC. A line cut short by a crash or Ctrl-C fails
 its CRC and is dropped on load, so a resume only redoes the unit in flight.
 """
 
+from __future__ import annotations
+
 import json
 import zlib
 from pathlib import Path
