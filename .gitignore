@@ -1,0 +1,35 @@
+# secrets / local config
+.env
+.env.*
+*.key
+*.pem
+*.p12
+secrets/
+.claude/
+config.local.*
+*.local.json
+.obsidian/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# models, activations, data, bench output
+/weights/
+/models/
+/activations/
+/data/
+/runs/
+/out/
+/results/
+*.safetensors
+*.gguf
+*.bin
+*.pt
+*.pth
+*.npy
+*.npz
+fio-testfile*
+.DS_Store
