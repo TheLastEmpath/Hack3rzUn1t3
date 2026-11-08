@@ -47,6 +47,10 @@ python3 scripts/stage0/hop_calc.py --batch 64 --seq 256 --d-model 4096 --bandwid
 Everything longer lives in [docs/](docs/). Docs are written once, here; the
 owner's notes app views this folder through a symlink.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Start with [docs/handoff.md](docs/handoff.md).
+
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE). Third-party components keep their own

@@ -1,0 +1,20 @@
+name: tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  harness:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Run harness tests (no GPU)
+        run: PYTHONPATH=src python -m unittest tests.test_harness tests.test_coordinator tests.test_net tests.test_worker
