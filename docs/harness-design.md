@@ -10,7 +10,7 @@ harness many volunteers can run for a very large MoE model. Background:
 [stage1-flow.md](stage1-flow.md). K3 figures stay unverified.
 
 Status: the torch-free core exists and is tested (`src/hack3rzun1t3/harness/`,
-`tests/test_harness.py`, `tests/test_coordinator.py`). Real compute and layer streaming exist (checked on the 3B); neither is tried yet on a model larger than the card.
+`tests/test_harness.py`, `tests/test_coordinator.py`). Real compute and layer streaming exist (checked on the 3B); streaming also ran on a 7B that does not fit the card.
 
 ## Two phases, very different costs
 
@@ -125,14 +125,24 @@ Llama-style models (Qwen2, Llama, Mistral) and plugs in as
 `make_streaming_compute(...)`, the same contract as `gpu_compute`.
 `scripts/streaming_equiv_check.py` on Qwen2.5-3B (3 ranges x 2 batches): max
 absolute difference 0 versus the in-memory path, peak VRAM 0.88 GiB
-(2026-11-13). Not yet tried on a model larger than the card.
+(2026-11-13).
+
+First run on a model larger than the card (2026-11-13): Qwen2.5-7B-Instruct
+(28 layers, d_model 3584, about 15 GB in bf16) on the 12 GB card, 8 harmful + 8
+harmless prompts, `scripts/streaming_consistency_check.py`. Peak VRAM 1.90 GiB.
+One full-range pass over both batches took 145 s (reading the weights from a SATA
+SSD is the cost); the same prompts as three split layer ranges gave per-layer sums
+identical to the full pass (max absolute difference 0). The layer with the
+largest mean-difference norm was the last one (norm 272), which mostly reflects
+residual norms growing with depth; picking the layer that matters needs the
+sweep, not this number. Not compared against an in-memory run, since the model
+does not fit.
 
 ## Not built yet (next steps in order)
 
-1. A first run on a model that really does not fit one card (the 7B stage).
-2. Command-line entry points for coordinator and worker, with a config file.
-3. Phase 2 shard editor with the "edit equals hook" equivalence test.
-4. Expert-group streaming for MoE layers too big for one card.
+1. Command-line entry points for coordinator and worker, with a config file.
+2. Phase 2 shard editor with the "edit equals hook" equivalence test.
+3. Expert-group streaming for MoE layers too big for one card.
 
 ## Tests
 
