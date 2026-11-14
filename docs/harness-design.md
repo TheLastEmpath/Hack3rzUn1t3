@@ -1,6 +1,6 @@
 ---
 created: 2026-11-05T09:00
-updated: 2026-11-13T20:42
+updated: 2026-11-13T20:55
 ---
 # Harness design: first slice
 
@@ -10,7 +10,7 @@ harness many volunteers can run for a very large MoE model. Background:
 [stage1-flow.md](stage1-flow.md). K3 figures stay unverified.
 
 Status: the torch-free core exists and is tested (`src/hack3rzun1t3/harness/`,
-`tests/test_harness.py`, `tests/test_coordinator.py`). Real compute exists for models that fit one card; layer streaming is not built.
+`tests/test_harness.py`, `tests/test_coordinator.py`). Real compute and layer streaming exist (checked on the 3B); neither is tried yet on a model larger than the card.
 
 ## Two phases, very different costs
 
@@ -114,9 +114,22 @@ batches, combines them, and compares with the whole-model path: max absolute
 difference 0 (2026-11-13, one 12 GB GPU). The whole model fits the card here, so
 this is not yet layer streaming.
 
+## Layer streaming (built)
+
+`harness/streaming.py` runs a model that does not fit the card. Only the token
+embedding and one decoder layer are on the GPU at once. For a prompt batch the
+hidden states stay on the GPU while each layer's weights are read from the
+safetensors files, applied to every prompt, and freed, so a batch costs one read
+of layers 0..end-1. The final norm and LM head are never loaded. It works for
+Llama-style models (Qwen2, Llama, Mistral) and plugs in as
+`make_streaming_compute(...)`, the same contract as `gpu_compute`.
+`scripts/streaming_equiv_check.py` on Qwen2.5-3B (3 ranges x 2 batches): max
+absolute difference 0 versus the in-memory path, peak VRAM 0.88 GiB
+(2026-11-13). Not yet tried on a model larger than the card.
+
 ## Not built yet (next steps in order)
 
-1. Layer streaming for models that do not fit one card (load one range at a time).
+1. A first run on a model that really does not fit one card (the 7B stage).
 2. Command-line entry points for coordinator and worker, with a config file.
 3. Phase 2 shard editor with the "edit equals hook" equivalence test.
 4. Expert-group streaming for MoE layers too big for one card.

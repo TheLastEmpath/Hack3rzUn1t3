@@ -1,6 +1,6 @@
 ---
 created: 2026-11-08T13:21
-updated: 2026-11-13T20:42
+updated: 2026-11-13T20:55
 ---
 # Pick up here
 
@@ -33,9 +33,10 @@ server. Any contributor machine is a **worker**.
 
 ## Next steps (not started unless noted)
 
-1. Layer streaming (load one layer range at a time), then a 7B run. Real compute for
-   models that fit one card is done: `harness/gpu_compute.py`, checked by
-   `scripts/gpu_equiv_check.py`.
+1. A first run on a model that really does not fit one card (7B). Real compute
+   (`harness/gpu_compute.py`) and layer streaming (`harness/streaming.py`) are
+   built and match the in-memory path exactly on the 3B; see
+   `scripts/gpu_equiv_check.py` and `scripts/streaming_equiv_check.py`.
 2. Shard editor and layer selection (needs a GPU machine).
 3. Per-worker public-key signatures and network access rules.
 4. MoE expert-group streaming and a small MoE rehearsal.
