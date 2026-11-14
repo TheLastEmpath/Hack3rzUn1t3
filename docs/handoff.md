@@ -1,3 +1,7 @@
+---
+created: 2026-11-08T13:21
+updated: 2026-11-13T20:42
+---
 # Pick up here
 
 Where the project stands and what to do next, for anyone continuing the work.
@@ -29,7 +33,9 @@ server. Any contributor machine is a **worker**.
 
 ## Next steps (not started unless noted)
 
-1. Layer-streaming engine, then a 7B run (needs a GPU machine).
+1. Layer streaming (load one layer range at a time), then a 7B run. Real compute for
+   models that fit one card is done: `harness/gpu_compute.py`, checked by
+   `scripts/gpu_equiv_check.py`.
 2. Shard editor and layer selection (needs a GPU machine).
 3. Per-worker public-key signatures and network access rules.
 4. MoE expert-group streaming and a small MoE rehearsal.

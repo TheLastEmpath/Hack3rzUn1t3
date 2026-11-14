@@ -1,6 +1,6 @@
 ---
 created: 2026-11-05T09:00
-updated: 2026-11-05T10:47
+updated: 2026-11-13T20:42
 ---
 # Harness design: first slice
 
@@ -10,7 +10,7 @@ harness many volunteers can run for a very large MoE model. Background:
 [stage1-flow.md](stage1-flow.md). K3 figures stay unverified.
 
 Status: the torch-free core exists and is tested (`src/hack3rzun1t3/harness/`,
-`tests/test_harness.py`, `tests/test_coordinator.py`). The GPU side (layer streaming, hooks) is not built.
+`tests/test_harness.py`, `tests/test_coordinator.py`). Real compute exists for models that fit one card; layer streaming is not built.
 
 ## Two phases, very different costs
 
@@ -103,11 +103,21 @@ the real streaming engine plugs in later. A compute failure (for example out of
 memory) is not reported; the lease expires and the unit is handed out again,
 the same path as a vanished worker.
 
+## Real compute (built)
+
+`harness/gpu_compute.py` (needs torch, imported by workers only) turns a loaded
+HF model into a `compute(unit) -> Partial`. It runs each prompt of the unit's
+batch alone (no padding), sums the last-token residual entering each layer in
+the range in float64, and stops the forward pass after the last wanted layer.
+`scripts/gpu_equiv_check.py` splits Qwen2.5-3B into 3 layer ranges x 2 prompt
+batches, combines them, and compares with the whole-model path: max absolute
+difference 0 (2026-11-13, one 12 GB GPU). The whole model fits the card here, so
+this is not yet layer streaming.
+
 ## Not built yet (next steps in order)
 
-1. Network layer around `claim` and `submit` (outbound-only workers).
-2. Single-GPU layer-streaming worker producing a real `Partial`, checked
-   against the in-memory run on the 1.5B model (stage 1b).
+1. Layer streaming for models that do not fit one card (load one range at a time).
+2. Command-line entry points for coordinator and worker, with a config file.
 3. Phase 2 shard editor with the "edit equals hook" equivalence test.
 4. Expert-group streaming for MoE layers too big for one card.
 
